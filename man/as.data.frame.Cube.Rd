@@ -4,7 +4,8 @@
 \alias{as.data.frame.Cube}
 \title{Converts the actual view of a cube to a data frame}
 \usage{
-\method{as.data.frame}{Cube}(x, row.names = NULL, optional = FALSE, ...)
+\method{as.data.frame}{Cube}(x, row.names = NULL, optional = FALSE,
+  ...)
 }
 \arguments{
 \item{x}{The \code{Cube} object that will be converted to a data frame.}
@@ -20,7 +21,7 @@ A molten data frame
 }
 \description{
 Converts the actual view of a \code{Cube} object to a data frame. All added selections and
-aggregations will be regarded. Note that selection criteria will be applied before the
+aggregations will be regarded. Note that selection criteria will be applied before
 aggregating the data.
 }
 \examples{
@@ -28,7 +29,7 @@ aggregating the data.
 data("sales")
 cube = generateCube(sales, columns = list(time = c("month", "year"),
       location = c("state"), product = "product"), valueColumn = "amount")
-cube = changeDimensionOrder(cube, dimensions = c("product", "month", "year", "state"))
+cube = change.dimensionOrder(cube, dimensions = c("product", "month", "year", "state"))
 df = as.data.frame(cube)
 df
 

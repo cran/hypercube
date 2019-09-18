@@ -1,0 +1,13 @@
+2019-09-18
+Version 0.2.0
+New
+- Generating parallel coordinate plots
+- Compute dimension importance
+- Compute sparsity
+Changed
+- changeDimensionOrder -> change.dimensionOrder
+- add.aggregation, add.selection, change.dimensionOrder, remove.aggregation and remove.selection now are S4-methods
+
+2017-12-15
+Version 0.1.0
+Initial Version

@@ -8,16 +8,18 @@
 #'
 #'
 #' \tabular{ll}{ Package: \tab hypercube\cr Type: \tab Package\cr Version:
-#' \tab 0.1.0\cr Date: \tab 2017-12-14\cr License: \tab GPL-3\cr Depends: \tab
+#' \tab 0.2.0\cr Date: \tab 2019-09-18\cr License: \tab GPL-3\cr Depends: \tab
 #' R (>= 3.0), methods\cr }
 #'
 #' @name hypercube-package
 #' @aliases hypercube-package hypercube
 #' @docType package
 #' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
-#' @import methods stringr
+#' @import methods stringr dplyr
 #' @importFrom stats median sd
-#' @keywords hypercube, hyperdimensional data
+#' @importFrom plotly plot_ly
+#' @concept hypercube
+#' @keywords manip
 #' @examples
 #'
 #' # Simple example
