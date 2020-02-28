@@ -8,7 +8,7 @@
 #' @slot view (list) Information about how to build a view for the hypercube. This information is stored in a list of \code{\link{Dimension-class}} objects.
 #' @section Objects from the Class: Objects can be created by calls of the form
 #' \code{new("Cube", ...)}. This S4 class describes \code{Cube} objects.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @seealso \code{\link{generateCube}}
 #' @keywords classes
 #' @examples
@@ -188,7 +188,7 @@ setClass(
 #' aggregating the data.
 #'
 #' @param object The \code{Cube} object
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @seealso \code{\link[=Cube-class]{Cube}}
 #' @examples
 #'
@@ -229,13 +229,13 @@ setMethod("show", "Cube", function(object) {
 #' Visualizes a Cube object as parallel coordinate plot
 #'
 #' Generates a parallel coordinate plot for a given \code{Cube} object. All added selections and aggregations will be
-#' regarded. 
+#' regarded.
 #'
 #' @param x The \code{Cube} object that should be plotted.
 #' @param color The color of the lines in the parallel coordinate plot. If this parameter is NA or NULL, a colorscale rather than a unique color will be used.
 #' @param colorscale The colorscale for the lines in the parallel coordinate plot. Default is RdBu. All plotly colorscales (e.g., Blackbody, Earth, Jet) are possible.
 #' @param ... Further plot_ly parameters.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @seealso \code{\link[=Cube-class]{Cube}}
 #' @keywords methods
 #' @docType methods
@@ -271,6 +271,52 @@ setMethod("plot", "Cube", function(x, color = NA, colorscale = "RdBu", ...) {
 })
 
 
+#' Shows a summary for the given cube
+#'
+#' Shows the dimensions and the number of levels per dimension of the given cube. All added selections and aggregations will be
+#' regarded.
+#'
+#' @param x The \code{Cube} object for which the summary is shown.
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
+#' @seealso \code{\link[=Cube-class]{Cube}}
+#' @aliases summary,Cube-method
+#' @keywords methods
+#' @docType methods
+#' @examples
+#'
+#' data("sales")
+#' cube = generateCube(sales, columns = list(time = c("month", "year"),
+#'       location = c("state"), product = "product"), valueColumn = "amount")
+#' summary(cube)
+#'
+#' @export
+setGeneric("summary", function(x)
+  standardGeneric("summary"))
+setMethod("summary", "Cube", function(x) {
+  df = as.data.frame(x)
+  for (i in 1:length(x@structure)) {
+    name = names(x@structure)[i]
+    variables = x@structure[[i]]
+    if (length(variables) > 1) {
+      if (sum(variables %in% names(df)) > 0) {
+        cat(name, "\n")
+        for (variable in variables) {
+          if (variable %in% names(df)) {
+            levels = length(unique(df[[variable]]))
+            cat("- ", variable, ": ", levels, " Levels\n", sep = "")
+          }
+        }
+      }
+    } else {
+      if (variables %in% names(df)) {
+        levels = length(unique(df[[variables]]))
+        cat(name, ": ", levels, " Levels\n", sep = "")
+      }
+    }
+  }
+})
+
+
 #' Generates a hypercube from a given dataframe
 #'
 #' This function generates a hypercube from a given dataframe. The dimensions of the
@@ -280,8 +326,10 @@ setMethod("plot", "Cube", function(x, color = NA, colorscale = "RdBu", ...) {
 #' @param columns A vector of column names that will form the dimensions of the hypercube.
 #' @param valueColumn The name of the column that provides the values for the cells of
 #' the hypercube.
+#' @param fun Aggregation function for aggregating over those columns that do not correspond
+#' with any dimension of the hypercube.
 #' @return Returns a \code{Cube} object.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @seealso \code{\link[=Cube-class]{Cube}}
 #' @keywords methods
 #' @docType methods
@@ -292,7 +340,7 @@ setMethod("plot", "Cube", function(x, color = NA, colorscale = "RdBu", ...) {
 #'       location = c("state"), product = "product"), valueColumn = "amount")
 #'
 #' @export generateCube
-generateCube = function(data, columns, valueColumn) {
+generateCube = function(data, columns, valueColumn, fun = c("sum", "min", "max", "prod", "mean", "median", "sd", "count")) {
   if (!is.data.frame(data)) {
     stop("Parameter data must be a data.frame.")
   }
@@ -302,10 +350,53 @@ generateCube = function(data, columns, valueColumn) {
   if (!is.character(valueColumn)) {
     stop("Parameter valueColumn must be a character.")
   }
-  data = tapply(
-    data[[valueColumn]],
-    data[,c(as.character(unlist(columns)))],
-    FUN=function(x){return(sum(x))})
+  if (!valueColumn %in% names(data)) {
+    stop("Parameter valueColumn is not in the given data frame.")
+  }
+  fun = match.arg(fun)
+  if (fun == "sum") {
+    data = tapply(
+      data[[valueColumn]],
+      data[,c(as.character(unlist(columns)))],
+      FUN=function(x){return(sum(x, na.rm = T))})
+  } else if (fun == "min") {
+    data = tapply(
+      data[[valueColumn]],
+      data[,c(as.character(unlist(columns)))],
+      FUN=function(x){return(min(x, na.rm = T))})
+  } else if (fun == "max") {
+    data = tapply(
+      data[[valueColumn]],
+      data[,c(as.character(unlist(columns)))],
+      FUN=function(x){return(max(x, na.rm = T))})
+  } else if (fun == "prod") {
+    data = tapply(
+      data[[valueColumn]],
+      data[,c(as.character(unlist(columns)))],
+      FUN=function(x){return(prod(x, na.rm = T))})
+  } else if (fun == "mean") {
+    data = tapply(
+      data[[valueColumn]],
+      data[,c(as.character(unlist(columns)))],
+      FUN=function(x){return(mean(x, na.rm = T))})
+  } else if (fun == "median") {
+    data = tapply(
+      data[[valueColumn]],
+      data[,c(as.character(unlist(columns)))],
+      FUN=function(x){return(median(x, na.rm = T))})
+  } else if (fun == "sd") {
+    data = tapply(
+      data[[valueColumn]],
+      data[,c(as.character(unlist(columns)))],
+      FUN=function(x){return(sd(x, na.rm = T))})
+  } else if (fun == "count") {
+    data = tapply(
+      data[[valueColumn]],
+      data[,c(as.character(unlist(columns)))],
+      FUN=function(x){return(sum(!is.na(x)))})
+  } else {
+    stop("Incorrect aggregation function.")
+  }
   view = sapply(X = unlist(columns), FUN = function(x) {return(new("Dimension", name = x, values = "", aggregation = ""))})
   names(view) = unlist(columns)
   cube = new("Cube", data = data, structure = columns, view = view)
@@ -323,7 +414,7 @@ generateCube = function(data, columns, valueColumn) {
 #' @param x Hypercube for which the selection criteria will be defined.
 #' @param criteria A list of selection criteria.
 #' @return Returns a \code{Cube} object with the added selection criteria.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @seealso \code{\link[=Cube-class]{Cube}} \code{\link{remove.selection}} \code{\link{add.aggregation}}
 #' @aliases add.selection,Cube-method
 #' @keywords methods
@@ -383,7 +474,7 @@ setMethod("add.selection", "Cube", function(x, criteria) {
 #' @param x Hypercube for which the selection criteria will be defined.
 #' @param dimensions A vector of dimension names for which all selection criteria will be removed.
 #' @return Returns a \code{Cube} object with removed selection criteria.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @seealso \code{\link[=Cube-class]{Cube}} \code{\link{add.selection}} \code{\link{remove.aggregation}}
 #' @aliases remove.selection,Cube-method
 #' @keywords methods
@@ -435,7 +526,7 @@ setMethod("remove.selection", "Cube", function(x, dimensions) {
 #' @param dimensions A vector of dimensions that are used in the aggregation.
 #' @param fun The function that is used for aggregation. Possible functions are sum, prod, min, max, mean, median, sd, and count.
 #' @return Returns a \code{Cube} object with the added aggregation.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @seealso \code{\link[=Cube-class]{Cube}} \code{\link{remove.aggregation}} \code{\link{add.selection}}
 #' @aliases add.aggregation,Cube-method
 #' @keywords methods
@@ -489,7 +580,7 @@ setMethod("add.aggregation", "Cube", function(x, dimensions, fun = c("sum", "min
 #' @param dimensions A vector of dimensions for which the aggregations will be removed.
 #' @param last Should the last aggregation be removed? If this parameter is set TRUE, the dimension vector will be ignored.
 #' @return Returns a \code{Cube} object with the added aggregation.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @seealso \code{\link[=Cube-class]{Cube}} \code{\link{add.aggregation}} \code{\link{remove.selection}}
 #' @aliases remove.aggregation,Cube-method
 #' @keywords methods
@@ -561,7 +652,7 @@ setMethod("remove.aggregation", "Cube", function(x, dimensions = NA, last = FALS
 #' @param x Hypercube for which the dimensions should be re-ordered.
 #' @param dimensions Vector of dimensions. The order of the dimensions in this vector defines the order of the dimensions in the cube.
 #' @return Returns a \code{Cube} object.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @seealso \code{\link[=Cube-class]{Cube}}
 #' @aliases change.dimensionOrder,Cube-method
 #' @keywords methods
@@ -606,7 +697,7 @@ setMethod("change.dimensionOrder", "Cube", function(x, dimensions) {
 #' @param row.names A character vector giving the row names for the data frame.
 #' @param optional Should setting row names and converting column names be optional?
 #' @param ... Further parameters that are passed to \code{\link{as.data.frame.table}}.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @return A molten data frame
 #' @seealso \code{\link{add.aggregation}} \code{\link{add.selection}}
 #' @examples
@@ -643,7 +734,14 @@ as.data.frame.Cube = function(x, row.names = NULL, optional = FALSE, ...) {
       }
     }
   }
-  df = as.data.frame.table(dat, row.names = row.names, optional = optional, ...)
+  if (is.null(ncol(dat))) {
+    items = names(dat)
+    df = as.data.frame(cbind(items, dat))
+    names(df) = c(as.character(aggDF$columns), "value")
+    row.names(df) = seq(1, nrow(df))
+  } else {
+    df = as.data.frame.table(dat, row.names = row.names, optional = optional, ...)
+  }
   names(df)[ncol(df)] = "value"
   return(df)
 }
@@ -656,7 +754,7 @@ as.data.frame.Cube = function(x, row.names = NULL, optional = FALSE, ...) {
 #' aggregating the data.
 #'
 #' @param x The \code{Cube} object for which the sparsity will be computed.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @return Sparsity value
 #' @seealso \code{\link{importance}}
 #' @aliases sparsity,Cube-method
@@ -686,7 +784,7 @@ setMethod("sparsity", "Cube", function(x) {
 #' aggregating the data.
 #'
 #' @param x The \code{Cube} object for which the importance values will be computed.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @return Sparsity value
 #' @seealso \code{\link{sparsity}}
 #' @aliases importance,Cube-method
@@ -709,9 +807,12 @@ setMethod("importance", "Cube", function(x) {
   features = names(data)
   features = as.matrix(features[-which(features == target)], ncol = 1)
   imp = apply(features, 1, .informationGain, data, target)
+  imp = ifelse(is.na(imp), 1, imp)
   imp = as.matrix(imp/sum(imp), ncol = 1)
   rownames(imp) = features
-  importances = lapply(x@structure, .dimensionImportance, imp)
+  currentStructure = lapply(x@structure, function(x) x[x %in% rownames(imp)])
+  currentStructure = currentStructure[lengths(currentStructure) > 0]
+  importances = lapply(currentStructure, .dimensionImportance, imp)
   class(importances) = "Importances"
   return(importances)
 })
@@ -723,7 +824,7 @@ setMethod("importance", "Cube", function(x) {
 #'
 #' @param x The \code{Importances} object that will be printed.
 #' @param ... Ignored parameters.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @return Sparsity value
 #' @seealso \code{\link{importance}}
 #' @examples

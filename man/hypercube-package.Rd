@@ -4,7 +4,7 @@
 \name{hypercube-package}
 \alias{hypercube-package}
 \alias{hypercube}
-\title{Provides methods for organizing data in a hypercube}
+\title{Provides functions and methods for organizing data in hypercubes}
 \description{
 This package provides methods for organizing data in a hypercube
 Each cube can be manipulated with five operations rotation (changeDimensionOrder),
@@ -13,7 +13,7 @@ and rolling up (remove.aggregation).
 }
 \details{
 \tabular{ll}{ Package: \tab hypercube\cr Type: \tab Package\cr Version:
-\tab 0.2.0\cr Date: \tab 2019-09-18\cr License: \tab GPL-3\cr Depends: \tab
+\tab 0.2.1\cr Date: \tab 2020-02-27\cr License: \tab GPL-3\cr Depends: \tab
 R (>= 3.0), methods\cr }
 }
 \examples{
@@ -35,7 +35,7 @@ df = as.data.frame(cube)
 df
 }
 \author{
-Michael Scholz \email{michael.scholz@uni-passau.de}
+Michael Scholz \email{michael.scholz@th-deg.de}
 }
 \concept{hypercube}
 \keyword{manip}

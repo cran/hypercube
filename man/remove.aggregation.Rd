@@ -40,6 +40,6 @@ cube
 \code{\link[=Cube-class]{Cube}} \code{\link{add.aggregation}} \code{\link{remove.selection}}
 }
 \author{
-Michael Scholz \email{michael.scholz@uni-passau.de}
+Michael Scholz \email{michael.scholz@th-deg.de}
 }
 \keyword{methods}

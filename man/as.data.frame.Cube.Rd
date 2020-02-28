@@ -4,8 +4,7 @@
 \alias{as.data.frame.Cube}
 \title{Converts the actual view of a cube to a data frame}
 \usage{
-\method{as.data.frame}{Cube}(x, row.names = NULL, optional = FALSE,
-  ...)
+\method{as.data.frame}{Cube}(x, row.names = NULL, optional = FALSE, ...)
 }
 \arguments{
 \item{x}{The \code{Cube} object that will be converted to a data frame.}
@@ -38,5 +37,5 @@ df
 \code{\link{add.aggregation}} \code{\link{add.selection}}
 }
 \author{
-Michael Scholz \email{michael.scholz@uni-passau.de}
+Michael Scholz \email{michael.scholz@th-deg.de}
 }

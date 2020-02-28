@@ -8,7 +8,7 @@
 #' @slot aggregation (vector) A vector of aggregation functions that will be applied to this dimension.
 #' @section Objects from the Class: Objects can be created by calls of the form
 #' \code{new("Dimension", ...)}. This S4 class describes \code{Dimension} objects.
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @keywords classes
 #' @examples
 #'
@@ -30,7 +30,7 @@ setClass(
 #' Shows a \code{Dimension} object
 #'
 #' @param object The \code{Dimension} object
-#' @author Michael Scholz \email{michael.scholz@@uni-passau.de}
+#' @author Michael Scholz \email{michael.scholz@@th-deg.de}
 #' @seealso \code{\link[=Cube-class]{Cube}}
 #' @examples
 #'

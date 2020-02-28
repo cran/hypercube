@@ -1,13 +1,23 @@
-2019-09-18
-Version 0.2.0
-New
-- Generating parallel coordinate plots
-- Compute dimension importance
-- Compute sparsity
-Changed
-- changeDimensionOrder -> change.dimensionOrder
-- add.aggregation, add.selection, change.dimensionOrder, remove.aggregation and remove.selection now are S4-methods
+# hypercube 0.2.1 (02/27/2020)
 
-2017-12-15
-Version 0.1.0
-Initial Version
+## New Features
+* Possibility to specifiy the aggregation function when generating a cube and not using all available variables.
+
+## Bug Fixes
+* Fixed bug in as.data.frame when cube is aggregated to one dimension.
+* Fixed bug in computation of importances when selection or aggregation operation are applied to the cube.
+
+# hypercube 0.2.0 (09/18/2019)
+
+## New Features
+* Generating parallel coordinate plots
+* Compute dimension importance
+* Compute sparsity
+
+## Changes
+* changeDimensionOrder -> change.dimensionOrder
+* add.aggregation, add.selection, change.dimensionOrder, remove.aggregation and remove.selection now are S4-methods
+
+# hypercube 0.1.0 (12/15/2017)
+
+## Initial Version

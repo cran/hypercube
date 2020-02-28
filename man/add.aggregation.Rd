@@ -6,8 +6,11 @@
 \alias{add.aggregation,Cube-method}
 \title{Adds an aggregation to a hypercube}
 \usage{
-add.aggregation(x, dimensions, fun = c("sum", "min", "max", "prod",
-  "mean", "median", "sd", "count"))
+add.aggregation(
+  x,
+  dimensions,
+  fun = c("sum", "min", "max", "prod", "mean", "median", "sd", "count")
+)
 }
 \arguments{
 \item{x}{Hypercube for which the selection criteria will be defined.}
@@ -38,6 +41,6 @@ cube
 \code{\link[=Cube-class]{Cube}} \code{\link{remove.aggregation}} \code{\link{add.selection}}
 }
 \author{
-Michael Scholz \email{michael.scholz@uni-passau.de}
+Michael Scholz \email{michael.scholz@th-deg.de}
 }
 \keyword{methods}

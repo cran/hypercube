@@ -5,7 +5,12 @@
 \alias{generateCube}
 \title{Generates a hypercube from a given dataframe}
 \usage{
-generateCube(data, columns, valueColumn)
+generateCube(
+  data,
+  columns,
+  valueColumn,
+  fun = c("sum", "min", "max", "prod", "mean", "median", "sd", "count")
+)
 }
 \arguments{
 \item{data}{A dataframe that is used as source for the hypercube.}
@@ -14,6 +19,9 @@ generateCube(data, columns, valueColumn)
 
 \item{valueColumn}{The name of the column that provides the values for the cells of
 the hypercube.}
+
+\item{fun}{Aggregation function for aggregating over those columns that do not correspond
+with any dimension of the hypercube.}
 }
 \value{
 Returns a \code{Cube} object.
@@ -33,6 +41,6 @@ cube = generateCube(sales, columns = list(time = c("month", "year"),
 \code{\link[=Cube-class]{Cube}}
 }
 \author{
-Michael Scholz \email{michael.scholz@uni-passau.de}
+Michael Scholz \email{michael.scholz@th-deg.de}
 }
 \keyword{methods}

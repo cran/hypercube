@@ -1,10 +1,10 @@
 Package: hypercube
 Type: Package
-Title: Organizing Data in a Hypercube
-Version: 0.2.0
+Title: Organizing Data in Hypercubes
+Version: 0.2.1
 Author: Michael Scholz
-Maintainer: Michael Scholz <michael.scholz@uni-passau.de>
-Description: Provides methods for organizing data in a hypercube
+Maintainer: Michael Scholz <michael.scholz@th-deg.de>
+Description: Provides functions and methods for organizing data in hypercubes
   (i.e., a multi-dimensional cube). Cubes are generated from molten data frames.
   Each cube can be manipulated with five operations: rotation (change.dimensionOrder()),
   dicing and slicing (add.selection(), remove.selection()), drilling down (add.aggregation()),
@@ -14,8 +14,8 @@ Encoding: UTF-8
 Depends: R (>= 3.3.0), stats, plotly
 Imports: methods, stringr, dplyr
 LazyData: TRUE
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 NeedsCompilation: no
-Packaged: 2019-09-18 18:59:51 UTC; scholm5
+Packaged: 2020-02-27 13:57:33 UTC; mScholz
 Repository: CRAN
-Date/Publication: 2019-09-18 19:20:02 UTC
+Date/Publication: 2020-02-28 07:10:08 UTC
